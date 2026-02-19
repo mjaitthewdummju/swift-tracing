@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-14, macos-15]
+        swift: ["6.0", "6.1"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: |
+          XCODE_PATH=$(find /Applications -name "Xcode*.app" -maxdepth 1 | head -1)
+          sudo xcode-select -s "$XCODE_PATH/Contents/Developer"
+          swift --version
+
+      - name: Build
+        run: swift build -v
+
+      - name: Run tests
+        run: swift test -v
+
+  linux:
+    name: Test Swift ${{ matrix.swift }} on Linux
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        swift: ["6.0", "6.1"]
+    container:
+      image: swift:${{ matrix.swift }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: swift build -v
+
+      - name: Run tests
+        run: swift test -v
