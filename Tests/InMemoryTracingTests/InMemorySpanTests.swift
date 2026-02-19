@@ -1,27 +1,27 @@
-import XCTest
+import Testing
 
 @testable import InMemoryTracing
 @testable import Tracing
 
-final class InMemorySpanTests: XCTestCase {
-  func testSpanAttributes() {
+@Suite struct InMemorySpanTests {
+  @Test func spanAttributes() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .client, at: nil)
 
     span.attributes["http.method"] = .string("GET")
     span.attributes["http.status_code"] = .int64(200)
 
-    XCTAssertEqual(span.attributes["http.method"], .string("GET"))
-    XCTAssertEqual(span.attributes["http.status_code"], .int64(200))
+    #expect(span.attributes["http.method"] == .string("GET"))
+    #expect(span.attributes["http.status_code"] == .int64(200))
 
     span.end()
 
     let finished = tracer.finishedSpans[0]
-    XCTAssertEqual(finished.attributes["http.method"], .string("GET"))
-    XCTAssertEqual(finished.attributes["http.status_code"], .int64(200))
+    #expect(finished.attributes["http.method"] == .string("GET"))
+    #expect(finished.attributes["http.status_code"] == .int64(200))
   }
 
-  func testSpanStatus() {
+  @Test func spanStatus() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
@@ -29,10 +29,10 @@ final class InMemorySpanTests: XCTestCase {
     span.end()
 
     let finished = tracer.finishedSpans[0]
-    XCTAssertEqual(finished.status?.code, .ok)
+    #expect(finished.status?.code == .ok)
   }
 
-  func testSpanEvents() {
+  @Test func spanEvents() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
@@ -41,12 +41,12 @@ final class InMemorySpanTests: XCTestCase {
     span.end()
 
     let finished = tracer.finishedSpans[0]
-    XCTAssertEqual(finished.events.count, 2)
-    XCTAssertEqual(finished.events[0].name, "cache.hit")
-    XCTAssertEqual(finished.events[1].name, "cache.miss")
+    #expect(finished.events.count == 2)
+    #expect(finished.events[0].name == "cache.hit")
+    #expect(finished.events[1].name == "cache.miss")
   }
 
-  func testRecordError() {
+  @Test func recordError() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
@@ -55,23 +55,23 @@ final class InMemorySpanTests: XCTestCase {
     span.end()
 
     let finished = tracer.finishedSpans[0]
-    XCTAssertEqual(finished.status?.code, .error)
-    XCTAssertEqual(finished.events.count, 1)
-    XCTAssertEqual(finished.events[0].name, "exception")
+    #expect(finished.status?.code == .error)
+    #expect(finished.events.count == 1)
+    #expect(finished.events[0].name == "exception")
   }
 
-  func testSpanNotRecordingAfterEnd() {
+  @Test func spanNotRecordingAfterEnd() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
-    XCTAssertTrue(span.isRecording)
+    #expect(span.isRecording)
 
     span.end()
 
-    XCTAssertFalse(span.isRecording)
+    #expect(!span.isRecording)
   }
 
-  func testWithSpan() {
+  @Test func withSpan() {
     let tracer = InMemoryTracer()
 
     let result = tracer.withSpan("operation") { span in
@@ -79,14 +79,14 @@ final class InMemorySpanTests: XCTestCase {
       return 42
     }
 
-    XCTAssertEqual(result, 42)
-    XCTAssertEqual(tracer.finishedSpans.count, 1)
-    XCTAssertEqual(tracer.finishedSpans[0].operationName, "operation")
-    XCTAssertEqual(tracer.finishedSpans[0].attributes["key"], .string("value"))
-    XCTAssertEqual(tracer.finishedSpans[0].status?.code, .ok)
+    #expect(result == 42)
+    #expect(tracer.finishedSpans.count == 1)
+    #expect(tracer.finishedSpans[0].operationName == "operation")
+    #expect(tracer.finishedSpans[0].attributes["key"] == .string("value"))
+    #expect(tracer.finishedSpans[0].status?.code == .ok)
   }
 
-  func testWithSpanError() {
+  @Test func withSpanError() {
     let tracer = InMemoryTracer()
 
     struct TestError: Error {}
@@ -95,16 +95,16 @@ final class InMemorySpanTests: XCTestCase {
       try tracer.withSpan("operation") { _ in
         throw TestError()
       }
-      XCTFail("Should have thrown")
+      Issue.record("Should have thrown")
     } catch {
       // Expected
     }
 
-    XCTAssertEqual(tracer.finishedSpans.count, 1)
-    XCTAssertEqual(tracer.finishedSpans[0].status?.code, .error)
+    #expect(tracer.finishedSpans.count == 1)
+    #expect(tracer.finishedSpans[0].status?.code == .error)
   }
 
-  func testWithSpanAsync() async {
+  @Test func withSpanAsync() async {
     let tracer = InMemoryTracer()
 
     let result = await tracer.withSpan("async_operation") { span in
@@ -112,8 +112,8 @@ final class InMemorySpanTests: XCTestCase {
       return 42
     }
 
-    XCTAssertEqual(result, 42)
-    XCTAssertEqual(tracer.finishedSpans.count, 1)
-    XCTAssertEqual(tracer.finishedSpans[0].operationName, "async_operation")
+    #expect(result == 42)
+    #expect(tracer.finishedSpans.count == 1)
+    #expect(tracer.finishedSpans[0].operationName == "async_operation")
   }
 }

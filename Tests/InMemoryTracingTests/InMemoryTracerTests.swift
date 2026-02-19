@@ -1,41 +1,41 @@
-import XCTest
+import Testing
 
 @testable import InMemoryTracing
 @testable import Tracing
 
-final class InMemoryTracerTests: XCTestCase {
-  func testStartSpanCreatesRootSpan() {
+@Suite struct InMemoryTracerTests {
+  @Test func startSpanCreatesRootSpan() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
-    XCTAssertTrue(span.isRecording)
-    XCTAssertEqual(span.operationName, "test")
-    XCTAssertNil(span.context.parentSpanID)
+    #expect(span.isRecording)
+    #expect(span.operationName == "test")
+    #expect(span.context.parentSpanID == nil)
   }
 
-  func testStartSpanCreatesChildSpan() {
+  @Test func startSpanCreatesChildSpan() {
     let tracer = InMemoryTracer()
     let parentSpan = tracer.startSpan("parent", context: nil, ofKind: .internal, at: nil)
     let childSpan = tracer.startSpan(
       "child", context: parentSpan.context, ofKind: .internal, at: nil)
 
-    XCTAssertEqual(childSpan.context.traceID, parentSpan.context.traceID)
-    XCTAssertEqual(childSpan.context.parentSpanID, parentSpan.context.spanID)
+    #expect(childSpan.context.traceID == parentSpan.context.traceID)
+    #expect(childSpan.context.parentSpanID == parentSpan.context.spanID)
   }
 
-  func testFinishedSpansAreRecorded() {
+  @Test func finishedSpansAreRecorded() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
-    XCTAssertEqual(tracer.finishedSpans.count, 0)
+    #expect(tracer.finishedSpans.count == 0)
 
     span.end()
 
-    XCTAssertEqual(tracer.finishedSpans.count, 1)
-    XCTAssertEqual(tracer.finishedSpans[0].operationName, "test")
+    #expect(tracer.finishedSpans.count == 1)
+    #expect(tracer.finishedSpans[0].operationName == "test")
   }
 
-  func testSpansWithName() {
+  @Test func spansWithName() {
     let tracer = InMemoryTracer()
 
     let span1 = tracer.startSpan("operation1", context: nil, ofKind: .internal, at: nil)
@@ -47,21 +47,21 @@ final class InMemoryTracerTests: XCTestCase {
     span3.end()
 
     let operation1Spans = tracer.spans(withName: "operation1")
-    XCTAssertEqual(operation1Spans.count, 2)
+    #expect(operation1Spans.count == 2)
 
     let operation2Spans = tracer.spans(withName: "operation2")
-    XCTAssertEqual(operation2Spans.count, 1)
+    #expect(operation2Spans.count == 1)
   }
 
-  func testClearFinishedSpans() {
+  @Test func clearFinishedSpans() {
     let tracer = InMemoryTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
     span.end()
 
-    XCTAssertEqual(tracer.finishedSpans.count, 1)
+    #expect(tracer.finishedSpans.count == 1)
 
     tracer.clearFinishedSpans()
 
-    XCTAssertEqual(tracer.finishedSpans.count, 0)
+    #expect(tracer.finishedSpans.count == 0)
   }
 }

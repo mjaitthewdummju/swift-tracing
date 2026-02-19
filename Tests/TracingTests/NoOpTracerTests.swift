@@ -1,16 +1,16 @@
-import XCTest
+import Testing
 
 @testable import Tracing
 
-final class NoOpTracerTests: XCTestCase {
-  func testNoOpSpanIsNotRecording() {
+@Suite struct NoOpTracerTests {
+  @Test func noOpSpanIsNotRecording() {
     let tracer = NoOpTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
-    XCTAssertFalse(span.isRecording)
+    #expect(!span.isRecording)
   }
 
-  func testNoOpSpanOperationsAreNoOps() {
+  @Test func noOpSpanOperationsAreNoOps() {
     let tracer = NoOpTracer()
     let span = tracer.startSpan("test", context: nil, ofKind: .internal, at: nil)
 
@@ -20,17 +20,17 @@ final class NoOpTracerTests: XCTestCase {
     span.end()
 
     // Should not crash and should have no effect
-    XCTAssertFalse(span.isRecording)
+    #expect(!span.isRecording)
   }
 
-  func testWithSpanNoOp() {
+  @Test func withSpanNoOp() {
     let tracer = NoOpTracer()
 
     let result = tracer.withSpan("test") { span in
-      XCTAssertFalse(span.isRecording)
+      #expect(!span.isRecording)
       return 42
     }
 
-    XCTAssertEqual(result, 42)
+    #expect(result == 42)
   }
 }
