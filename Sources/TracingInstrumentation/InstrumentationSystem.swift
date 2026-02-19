@@ -1,3 +1,4 @@
+import Foundation
 import Tracing
 
 /// A global singleton for managing the tracer instance.
@@ -16,27 +17,27 @@ import Tracing
 /// }
 /// ```
 public enum InstrumentationSystem {
-    private static let lock = ReadWriteLock()
-    private nonisolated(unsafe) static var _tracer: (any Tracer)?
+  private static let lock = NSLock()
+  private nonisolated(unsafe) static var _tracer: (any Tracer)?
 
-    /// Bootstraps the instrumentation system with the given tracer.
-    ///
-    /// This should be called once at application startup.
-    ///
-    /// - Parameter tracer: The tracer to use for creating spans.
-    /// - Warning: Calling this method multiple times will replace the existing tracer.
-    public static func bootstrap<T: Tracer>(_ tracer: T) {
-        lock.withWriterLock {
-            _tracer = tracer
-        }
+  /// Bootstraps the instrumentation system with the given tracer.
+  ///
+  /// This should be called once at application startup.
+  ///
+  /// - Parameter tracer: The tracer to use for creating spans.
+  /// - Warning: Calling this method multiple times will replace the existing tracer.
+  public static func bootstrap<T: Tracer>(_ tracer: T) {
+    lock.withLock {
+      _tracer = tracer
     }
+  }
 
-    /// The current tracer instance.
-    ///
-    /// If no tracer has been bootstrapped, returns a NoOpTracer.
-    public static var tracer: any Tracer {
-        lock.withReaderLock {
-            _tracer ?? NoOpTracer()
-        }
+  /// The current tracer instance.
+  ///
+  /// If no tracer has been bootstrapped, returns a NoOpTracer.
+  public static var tracer: any Tracer {
+    lock.withLock {
+      _tracer ?? NoOpTracer()
     }
+  }
 }

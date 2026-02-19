@@ -17,28 +17,28 @@ import Foundation
 /// ))
 /// ```
 public struct SpanEvent: Sendable, Hashable {
-    /// The name of the event.
-    public let name: String
+  /// The name of the event.
+  public let name: String
 
-    /// The timestamp when the event occurred.
-    public let timestamp: Date
+  /// The timestamp when the event occurred.
+  public let timestamp: Date
 
-    /// Additional attributes describing the event.
-    public let attributes: SpanAttributes
+  /// Additional attributes describing the event.
+  public let attributes: SpanAttributes
 
-    /// Creates a span event with the given name and optional timestamp and attributes.
-    ///
-    /// - Parameters:
-    ///   - name: The name of the event.
-    ///   - timestamp: The timestamp when the event occurred. Defaults to the current time.
-    ///   - attributes: Additional attributes describing the event. Defaults to empty.
-    public init(
-        name: String,
-        timestamp: Date = Date(),
-        attributes: SpanAttributes = SpanAttributes()
-    ) {
-        self.name = name
-        self.timestamp = timestamp
-        self.attributes = attributes
-    }
+  /// Creates a span event with the given name and optional timestamp and attributes.
+  ///
+  /// - Parameters:
+  ///   - name: The name of the event.
+  ///   - timestamp: The timestamp when the event occurred. Defaults to the current time.
+  ///   - attributes: Additional attributes describing the event. Defaults to empty.
+  public init(
+    name: String,
+    timestamp: Date = Date(),
+    attributes: SpanAttributes = SpanAttributes()
+  ) {
+    self.name = name
+    self.timestamp = timestamp
+    self.attributes = attributes
+  }
 }

@@ -14,45 +14,45 @@
 /// span.attributes["response.headers"] = ["Content-Type", "Authorization"]
 /// ```
 public enum SpanAttribute: Sendable, Hashable {
-    case int32(Int32)
-    case int64(Int64)
-    case double(Double)
-    case string(String)
-    case bool(Bool)
+  case int32(Int32)
+  case int64(Int64)
+  case double(Double)
+  case string(String)
+  case bool(Bool)
 
-    case int32Array([Int32])
-    case int64Array([Int64])
-    case doubleArray([Double])
-    case stringArray([String])
-    case boolArray([Bool])
+  case int32Array([Int32])
+  case int64Array([Int64])
+  case doubleArray([Double])
+  case stringArray([String])
+  case boolArray([Bool])
 }
 
 extension SpanAttribute: ExpressibleByIntegerLiteral {
-    public init(integerLiteral value: Int) {
-        self = .int64(Int64(value))
-    }
+  public init(integerLiteral value: Int) {
+    self = .int64(Int64(value))
+  }
 }
 
 extension SpanAttribute: ExpressibleByFloatLiteral {
-    public init(floatLiteral value: Double) {
-        self = .double(value)
-    }
+  public init(floatLiteral value: Double) {
+    self = .double(value)
+  }
 }
 
 extension SpanAttribute: ExpressibleByStringLiteral {
-    public init(stringLiteral value: String) {
-        self = .string(value)
-    }
+  public init(stringLiteral value: String) {
+    self = .string(value)
+  }
 }
 
 extension SpanAttribute: ExpressibleByBooleanLiteral {
-    public init(booleanLiteral value: Bool) {
-        self = .bool(value)
-    }
+  public init(booleanLiteral value: Bool) {
+    self = .bool(value)
+  }
 }
 
 extension SpanAttribute: ExpressibleByArrayLiteral {
-    public init(arrayLiteral elements: String...) {
-        self = .stringArray(elements)
-    }
+  public init(arrayLiteral elements: String...) {
+    self = .stringArray(elements)
+  }
 }

@@ -14,48 +14,48 @@ import Foundation
 /// }
 /// ```
 public struct NoOpTracer: Tracer, Sendable {
-    /// Creates a no-op tracer.
-    public init() {}
+  /// Creates a no-op tracer.
+  public init() {}
 
-    public func startSpan(
-        _ operationName: String,
-        context: SpanContext?,
-        ofKind kind: SpanKind,
-        at instant: (any TracerInstant)?
-    ) -> NoOpSpan {
-        NoOpSpan()
+  public func startSpan(
+    _ operationName: String,
+    context: SpanContext?,
+    ofKind kind: SpanKind,
+    at instant: (any TracerInstant)?
+  ) -> NoOpSpan {
+    NoOpSpan()
+  }
+
+  /// A span that performs no operations.
+  public final class NoOpSpan: SpanProtocol, @unchecked Sendable {
+    public let context: SpanContext = SpanContext(
+      traceID: "00000000000000000000000000000000",
+      spanID: "0000000000000000"
+    )
+
+    public let operationName: String = ""
+
+    public var attributes: SpanAttributes {
+      get { SpanAttributes() }
+      set {}
     }
 
-    /// A span that performs no operations.
-    public final class NoOpSpan: SpanProtocol, @unchecked Sendable {
-        public let context: SpanContext = SpanContext(
-            traceID: "00000000000000000000000000000000",
-            spanID: "0000000000000000"
-        )
+    public let isRecording: Bool = false
 
-        public let operationName: String = ""
+    public func setStatus(_ status: SpanStatus) {}
 
-        public var attributes: SpanAttributes {
-            get { SpanAttributes() }
-            set {}
-        }
+    public func addEvent(_ event: SpanEvent) {}
 
-        public let isRecording: Bool = false
+    public func recordError(
+      _ error: Error,
+      attributes: SpanAttributes,
+      at instant: (any TracerInstant)?
+    ) {}
 
-        public func setStatus(_ status: SpanStatus) {}
+    public func addLink(_ context: SpanContext) {}
 
-        public func addEvent(_ event: SpanEvent) {}
+    public func end(at instant: (any TracerInstant)?) {}
 
-        public func recordError(
-            _ error: Error,
-            attributes: SpanAttributes,
-            at instant: (any TracerInstant)?
-        ) {}
-
-        public func addLink(_ context: SpanContext) {}
-
-        public func end(at instant: (any TracerInstant)?) {}
-
-        init() {}
-    }
+    init() {}
+  }
 }
