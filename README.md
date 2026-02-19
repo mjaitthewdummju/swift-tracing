@@ -1,5 +1,7 @@
 # Swift Tracing
 
+[![CI](https://github.com/grdsdev/swift-tracing/actions/workflows/ci.yml/badge.svg)](https://github.com/grdsdev/swift-tracing/actions/workflows/ci.yml)
+
 A lightweight, protocol-oriented tracing package for Swift, focused on instrumenting client libraries without the complexity of distributed system concerns.
 
 ## Overview
