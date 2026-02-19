@@ -17,7 +17,7 @@ Add Swift Tracing to your package dependencies:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/grdsdev/swift-tracing.git", from: "1.0.0")
+    .package(url: "https://github.com/grdsdev/swift-tracing.git", from: "0.1.0")
 ]
 ```
 
